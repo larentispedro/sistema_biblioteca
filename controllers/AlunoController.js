@@ -17,13 +17,11 @@ async function excluir (request, response) {
   return response.json(dados);
 }
 
-async function inserir (request, response) {
-  const matricula = request.params.matricula;
-
-  const nome = request.body.nome;
-  const email = request.body.email;
-  const dados = await Aluno.update({ nome: nome, email: email });
-  return response.json(dados);
+async function inserir(req, res) {
+    const nome = req.body.nome;
+    const email = req.body.email;
+    const dados = await Aluno.create({ nome: nome, email: email });
+    return res.json(dados);
 }
 
 async function alterar (request, response) {
