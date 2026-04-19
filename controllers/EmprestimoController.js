@@ -47,10 +47,36 @@ async function emprestar(request, response) {
     emprestimo: emprestimo
   });
 
-  exemplar.update({status: 1});
+  await exemplar.update({ status: 1 });
 
   return response.json(dados);
 }
 
+async function devolver(request, response) {
+  const idemprestimo = request.params.idemprestimo;
 
-export default { listar, selecionar, emprestar};
+  // validar se o empréstimo existe
+  const emprestimo = await Emprestimo.findByPk(idemprestimo);
+  if (!emprestimo) {
+    return response.status(404).send({ erro: "Empréstimo não encontrado" });
+  }
+
+  // validar se já foi devolvido anteriormente
+  if (emprestimo.devolucao) {
+    return response.status(400).send({ erro: "Empréstimo já foi devolvido anteriormente" });
+  }
+
+  // se pendente, grava data de devolução
+  const devolucao = moment().format("YYYY-MM-DD");
+  await emprestimo.update({ devolucao: devolucao });
+
+  // mudar status do exemplar para disponível (0)
+  const exemplar = await Exemplar.findByPk(emprestimo.idexemplar);
+  if (exemplar) {
+    await exemplar.update({ status: 0 });
+  }
+
+  return response.json(emprestimo);
+}
+
+export default { listar, selecionar, emprestar, devolver };

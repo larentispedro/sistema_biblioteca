@@ -46,6 +46,7 @@ api.delete("/exemplar/:idexemplar", exemplar.excluir);
 api.get("/emprestimo", emprestimo.listar);
 api.get("/emprestimo/:idemprestimo", emprestimo.selecionar);
 api.post("/emprestimo", emprestimo.emprestar);
+api.put("/emprestimo/:idemprestimo/devolver", emprestimo.devolver);
 
 api.listen(3000, () => {
   console.log("Api rodando...");
